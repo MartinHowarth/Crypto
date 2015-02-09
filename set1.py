@@ -6,6 +6,10 @@ def hex_to_base64(string):
     return string.decode('hex').encode('base64').rstrip()
 
 
+def base64_to_hex(string):
+    return string.decode('base64').encode('hex').rstrip()
+
+
 def fixed_XOR(s1, s2):
     return strxor.strxor(s1, s2)
 
@@ -27,6 +31,9 @@ if __name__ == '__main__':
         print 'Success on set 1, challenge 1.'
     else:
         print string_64
+
+    if base64_to_hex(string_64) == hex_string:
+        print "Success 64 to hex"
 
     x1 = "1c0111001f010100061a024b53535009181c"
     x2 = "686974207468652062756c6c277320657965"
