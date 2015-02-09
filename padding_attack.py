@@ -54,33 +54,24 @@ def padding_attack(ciphertext, check_function):
         c2 = c_blocks[b_i]
         for _j in range(16):
             found_answer = False
-            for _i in range(0, 256):
+            for _i in range(256):
                 temp_guess = chr(_i) + _guess
                 new_c1 = change_bytes(c1, temp_guess)
 
                 to_send = _completed_cipher + new_c1 + c2
 
-                try:
-                    result = check_function(to_send)
-                except Exception as e:
-                    result = 500
-                    continue
+                result = check_function(to_send)
 
                 if result == 404 or result == 200:
                     _guess = temp_guess
                     print chr(_i),
                     found_answer = True
                     break
-                elif result != 500:
-                    print result
-                    if result != 403:
-                        raw_input("Waiting:")
-                elif result == 500:
+                elif result == 500 or result == 403:
+                    continue
+                else:
                     print _i, result
-                    raw_input("waiting on 500:")
-
-            if not found_answer:
-                print "Expand search", _i
+                    raw_input("waiting on new result:")
 
         print b_i, 'current:', _guess
         _plaintext += _guess
@@ -89,11 +80,13 @@ def padding_attack(ciphertext, check_function):
 
 
 def hex_padding_attack(ciphertext, check_function):
-    cipher = set1.hex_to_base64(ciphertext)
+    # cipher = set1.hex_to_base64(ciphertext)
+    cipher = ciphertext.decode('hex')
 
     def check(string):
-        print string
-        stri = set1.base64_to_hex(string)
+        # print string
+        # stri = set1.base64_to_hex(string)
+        stri = string.encode('hex')
         return check_function(stri)
 
     ret = padding_attack(cipher, check)
