@@ -29,15 +29,9 @@ def split_into_blocks_and_pad(string, block_length):
     for i in range(len(string) / block_length):
         blocks.append(string[0:block_length])
         string = string[block_length:]
-        if len(string) < block_length:
-            break
 
     blocks.append(pkcs7_padding(string, block_length))
 
-    # print blocks
-    for b in blocks:
-        if len(b) != 16:
-            print len(b), b
     return blocks
 
 

@@ -53,8 +53,7 @@ def padding_attack(ciphertext, check_function):
             c1 = c_blocks[b_i - 1]
         c2 = c_blocks[b_i]
         for _j in range(16):
-            found_answer = False
-            for _i in range(256):
+            for _i in range(16, 0, -1) + range(16, 256):
                 temp_guess = chr(_i) + _guess
                 new_c1 = change_bytes(c1, temp_guess)
 
@@ -64,33 +63,30 @@ def padding_attack(ciphertext, check_function):
 
                 if result == 404 or result == 200:
                     _guess = temp_guess
-                    print chr(_i),
-                    found_answer = True
+                    print chr(_i).rstrip(),
                     break
                 elif result == 500 or result == 403:
                     continue
                 else:
                     print _i, result
-                    raw_input("waiting on new result:")
+                    raw_input("waiting on unseen return value:")
 
-        print b_i, 'current:', _guess
+        print b_i, 'block:', _guess.rstrip()
         _plaintext += _guess
         _completed_cipher += c1
     return _plaintext
 
 
 def hex_padding_attack(ciphertext, check_function):
-    # cipher = set1.hex_to_base64(ciphertext)
     cipher = ciphertext.decode('hex')
 
     def check(string):
-        # print string
-        # stri = set1.base64_to_hex(string)
         stri = string.encode('hex')
         return check_function(stri)
 
     ret = padding_attack(cipher, check)
     return ret
+
 
 if __name__ == "__main__":
     debug = 0
@@ -120,7 +116,7 @@ if __name__ == "__main__":
     # end check change_bytes function
     iv = chr(0) * 16
     key = "YELLOW SUBMARINE"
-    message = "Super Secret Message made longer because testing alll the things"
+    message = "Super Secret Message made longer because testing alll the thingsadfadf"
     # print set2.split_into_blocks_and_pad(message, 16)
 
     encrypted = set2.cbc_encrypt(message, iv, key, 16)
@@ -143,42 +139,3 @@ if __name__ == "__main__":
     print
 
     print padding_attack(iv + encrypted, check)
-
-    print
-    print "##########################################################"
-    print
-
-    # hexy = iv + encrypted
-    # hexy = hexy.encode('base64').encode('hex')
-    # print hexy
-    # print hex_padding_attack(hexy, check)
-
-
-    # plaintext = ''
-    # completed_cipher = ''
-    # for b_i in range(len(c_blocks)):
-    #     guess = ''
-    #     if b_i == 0:
-    #         c1 = iv
-    #     else:
-    #         c1 = c_blocks[b_i - 1]
-    #     c2 = c_blocks[b_i]
-    #     for j in range(16):
-    #         for i in range(32, 127):
-    #             temp_guess = chr(i) + guess
-    #             new_c1 = change_bytes(c1, temp_guess)
-    #
-    #             to_send = completed_cipher + new_c1 + c2
-    #             if debug: print chr(i),
-    #             result = check(to_send)
-    #             if result == 404 or result == 200:
-    #                 guess = temp_guess
-    #                 break
-    #             elif result != 500:
-    #                 print result
-    #
-    #     print b_i, 'current:', guess
-    #     plaintext += guess
-    #     completed_cipher += c1
-    #
-    # print plaintext
